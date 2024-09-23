@@ -1,3 +1,4 @@
+import { SfButton } from "@storefront-ui/react";
 import { getSdk } from "../sdk/sdk.config";
 
 const sdk = getSdk();
@@ -7,5 +8,10 @@ export default async function Page() {
 
   console.log(products?.map((product) => product.name));
 
-  return <div>Page</div>;
+  return (
+    <div>
+      <h1>Products</h1>
+      <SfButton>Click me</SfButton>
+    </div>
+  );
 }

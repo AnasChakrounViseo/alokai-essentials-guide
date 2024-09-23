@@ -1,7 +1,23 @@
+import { ApiClientExtension } from "@vue-storefront/middleware";
+import { createUnifiedExtension } from "@vsf-enterprise/unified-api-sapcc";
+
 require("dotenv").config();
 
+export const unifiedApiExtension: ApiClientExtension = createUnifiedExtension({
+  normalizers: {
+    addCustomFields: [{}],
+  },
+  methods: {},
+  config: {
+    defaultCurrency: "USD",
+    transformImageUrl: (url: string) => {
+      return new URL(url, process.env.SAPCC_API_URI).toString();
+    },
+  },
+});
+
 export const integrations = {
-  sapcc: {
+  commerce: {
     location: "@vsf-enterprise/sapcc-api/server",
     configuration: {
       OAuth: {
@@ -23,5 +39,9 @@ export const integrations = {
         defaultCurrency: process.env.DEFAULT_CURRENCY,
       },
     },
+    extensions: (extensions: ApiClientExtension[]) => [
+      ...extensions,
+      unifiedApiExtension,
+    ],
   },
 };

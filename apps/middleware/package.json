@@ -13,7 +13,8 @@
     "@repo/typescript-config": "*",
     "consola": "^3.2.3",
     "@vue-storefront/middleware": "^4.3.0",
-    "@vsf-enterprise/sapcc-api": "^7.0.0"
+    "@vsf-enterprise/sapcc-api": "^7.0.0",
+    "@vsf-enterprise/unified-api-sapcc": "^2.0.0"
   },
   "devDependencies": {
     "ts-node-dev": "^2.0.0"

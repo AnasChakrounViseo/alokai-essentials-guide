@@ -4,13 +4,13 @@ import Link from "next/link";
 const sdk = getSdk();
 
 export default async function Page() {
-  const { products } = await sdk.sapcc.searchProduct({});
+  const { products } = await sdk.unified.searchProducts({});
   return (
     <div className="flex flex-col gap-3">
       {products?.map((product) => (
         <Link
-          href={`/product/${product.code}`}
-          key={product.code}
+          href={`/product/${product.id}`}
+          key={product.id}
           className="text-blue-500 underline"
         >
           - {product.name}

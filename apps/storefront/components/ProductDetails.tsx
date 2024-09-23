@@ -20,6 +20,7 @@ import { useCounter } from "react-use";
 import { useId, ChangeEvent } from "react";
 import { clamp } from "@storefront-ui/shared";
 import { Product } from "@vsf-enterprise/sap-commerce-webservices-sdk";
+import useCart from "../hooks/useCart";
 
 interface ProductDetailsProps {
   product: Product;
@@ -27,6 +28,7 @@ interface ProductDetailsProps {
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
   const inputId = useId();
+  const { addToCart } = useCart(); // Add this line
   const min = 1;
   const max = product.stock?.stockLevel ?? 1;
   const [value, { inc, dec, set }] = useCounter(min);
@@ -111,6 +113,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             size="lg"
             className="w-full xs:ml-4"
             slotPrefix={<SfIconShoppingCart size="sm" />}
+            onClick={async () => await addToCart(product, 1)}
           >
             Add to cart
           </SfButton>

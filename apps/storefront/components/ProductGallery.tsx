@@ -10,69 +10,18 @@ import {
   type SfScrollableOnDragEndData,
 } from "@storefront-ui/react";
 import classNames from "classnames";
+import { Product } from "@vsf-enterprise/sap-commerce-webservices-sdk";
+import Image from "next/image";
 
-const withBase = (filepath: string) =>
-  `https://storage.googleapis.com/sfui_docs_artifacts_bucket_public/production/gallery/${filepath}`;
+const transformImageUrl = (url: string) => {
+  return new URL(url, process.env.NEXT_PUBLIC_SAPCC_BASE_URL).toString();
+};
 
-const images = [
-  {
-    imageSrc: withBase("gallery_1.png"),
-    imageThumbSrc: withBase("gallery_1_thumb.png"),
-    alt: "backpack1",
-  },
-  {
-    imageSrc: withBase("gallery_2.png"),
-    imageThumbSrc: withBase("gallery_2_thumb.png"),
-    alt: "backpack2",
-  },
-  {
-    imageSrc: withBase("gallery_3.png"),
-    imageThumbSrc: withBase("gallery_3_thumb.png"),
-    alt: "backpack3",
-  },
-  {
-    imageSrc: withBase("gallery_4.png"),
-    imageThumbSrc: withBase("gallery_4_thumb.png"),
-    alt: "backpack4",
-  },
-  {
-    imageSrc: withBase("gallery_5.png"),
-    imageThumbSrc: withBase("gallery_5_thumb.png"),
-    alt: "backpack5",
-  },
-  {
-    imageSrc: withBase("gallery_6.png"),
-    imageThumbSrc: withBase("gallery_6_thumb.png"),
-    alt: "backpack6",
-  },
-  {
-    imageSrc: withBase("gallery_7.png"),
-    imageThumbSrc: withBase("gallery_7_thumb.png"),
-    alt: "backpack7",
-  },
-  {
-    imageSrc: withBase("gallery_8.png"),
-    imageThumbSrc: withBase("gallery_8_thumb.png"),
-    alt: "backpack8",
-  },
-  {
-    imageSrc: withBase("gallery_9.png"),
-    imageThumbSrc: withBase("gallery_9_thumb.png"),
-    alt: "backpack9",
-  },
-  {
-    imageSrc: withBase("gallery_10.png"),
-    imageThumbSrc: withBase("gallery_10_thumb.png"),
-    alt: "backpack10",
-  },
-  {
-    imageSrc: withBase("gallery_11.png"),
-    imageThumbSrc: withBase("gallery_11_thumb.png"),
-    alt: "backpack11",
-  },
-];
+interface ProductGalleryProps {
+  images: Product["images"];
+}
 
-export default function GalleryVertical() {
+export default function GalleryVertical({ images }: ProductGalleryProps) {
   const lastThumbRef = useRef<HTMLButtonElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
   const firstThumbRef = useRef<HTMLButtonElement>(null);
@@ -93,7 +42,7 @@ export default function GalleryVertical() {
   const onDragged = (event: SfScrollableOnDragEndData) => {
     if (event.swipeRight && activeIndex > 0) {
       setActiveIndex((currentActiveIndex) => currentActiveIndex - 1);
-    } else if (event.swipeLeft && activeIndex < images.length - 1) {
+    } else if (event.swipeLeft && images && activeIndex < images.length - 1) {
       setActiveIndex((currentActiveIndex) => currentActiveIndex + 1);
     }
   };
@@ -106,7 +55,7 @@ export default function GalleryVertical() {
         direction="vertical"
         activeIndex={activeIndex}
         prevDisabled={activeIndex === 0}
-        nextDisabled={activeIndex === images.length - 1}
+        nextDisabled={!images || activeIndex === images.length - 1}
         slotPreviousButton={
           <SfButton
             className={classNames(
@@ -136,7 +85,7 @@ export default function GalleryVertical() {
           />
         }
       >
-        {images.map(({ imageThumbSrc, alt }, index, thumbsArray) => (
+        {images?.map(({ url, altText }, index, thumbsArray) => (
           <button
             // eslint-disable-next-line no-nested-ternary
             ref={
@@ -147,9 +96,9 @@ export default function GalleryVertical() {
                   : null
             }
             type="button"
-            aria-label={alt}
+            aria-label={altText}
             aria-current={activeIndex === index}
-            key={`${alt}-${index}-thumbnail`}
+            key={`${altText}-${index}-thumbnail`}
             className={classNames(
               "md:w-[78px] md:h-auto relative shrink-0 pb-1 mx-4 -mb-2 border-b-4 snap-center cursor-pointer focus-visible:outline focus-visible:outline-offset transition-colors flex-grow md:flex-grow-0",
               {
@@ -160,12 +109,12 @@ export default function GalleryVertical() {
             onMouseOver={() => setActiveIndex(index)}
             onFocus={() => setActiveIndex(index)}
           >
-            <img
-              alt={alt}
+            <Image
+              alt={altText!}
               className="border border-neutral-200"
               width="78"
               height="78"
-              src={imageThumbSrc}
+              src={transformImageUrl(url!)}
             />
           </button>
         ))}
@@ -180,17 +129,19 @@ export default function GalleryVertical() {
         drag={{ containerWidth: true }}
         onDragEnd={onDragged}
       >
-        {images.map(({ imageSrc, alt }, index) => (
+        {images?.map(({ url, altText }, index) => (
           <div
-            key={`${alt}-${index}`}
+            key={`${altText}-${index}`}
             className="flex justify-center h-full basis-full shrink-0 grow snap-center snap-always"
           >
-            <img
-              aria-label={alt}
+            <Image
+              aria-label={altText}
               aria-hidden={activeIndex !== index}
               className="object-contain w-auto h-full"
-              alt={alt}
-              src={imageSrc}
+              alt={altText!}
+              src={transformImageUrl(url!)}
+              width="200"
+              height="200"
             />
           </div>
         ))}
